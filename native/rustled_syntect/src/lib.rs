@@ -6,8 +6,8 @@ extern crate syntect;
 use std::cell::RefCell;
 use rustler::{Env, Term, NifResult, ResourceArc};
 use syntect::{
-    parsing::{SyntaxSet, SyntaxReference, ParseState},
-    html::{tokens_to_classed_spans, ClassStyle}
+    parsing::{SyntaxSet, SyntaxReference, ParseState, ScopeStack},
+    html::{line_tokens_to_classed_spans, ClassStyle}
 };
 
 mod atoms {
@@ -93,6 +93,7 @@ struct SyntaxData {
 struct ClassedStreamHl {
     open_spans: isize,
     parse_state: ParseState,
+    scope_stack: ScopeStack,
     syntax_set: SyntaxSet,
 }
 
@@ -106,16 +107,18 @@ impl ClassedStreamHl {
         ClassedStreamHl {
             open_spans: 0,
             parse_state: ParseState::new(syntax_reference),
+            scope_stack: ScopeStack::new(),
             syntax_set: syntax_set.clone(),
         }
     }
 
     pub fn parse_html_for_line(&mut self, line: &str) -> String {
         let parsed_line = self.parse_state.parse_line(line, &self.syntax_set);
-        let (formatted_line, delta) = tokens_to_classed_spans(
+        let (formatted_line, delta) = line_tokens_to_classed_spans(
             line,
             parsed_line.as_slice(),
-            ClassStyle::Spaced);
+            ClassStyle::Spaced,
+            &mut self.scope_stack);
         self.open_spans += delta;
         formatted_line
     }

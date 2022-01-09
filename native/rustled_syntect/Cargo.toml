@@ -12,4 +12,4 @@ crate-type = ["dylib"]
 rustler = "0.23.0"
 rustler_codegen = "0.23.0"
 lazy_static = "1.0"
-syntect = { version = "4.2.0", features = ["parsing", "html"] }
+syntect = { version = "4.6.0", features = ["parsing", "html"] }
