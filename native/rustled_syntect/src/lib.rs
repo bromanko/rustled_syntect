@@ -76,7 +76,7 @@ fn make_syntax_set(folder: Option<&str>) -> SyntaxSet {
     let mut ss = SyntaxSet::load_defaults_newlines();
     if let Some(f) = folder {
         let mut builder = ss.into_builder();
-        builder.add_from_folder(f, false).unwrap();
+        builder.add_from_folder(f, true).unwrap();
         ss = builder.build()
     };
     ss
